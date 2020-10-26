@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <Card>
     <h1>新規登録</h1>
     <div>
       <form @submit.prevent="onSubmit">
@@ -25,7 +25,7 @@
         <button @click="clickHoge">hoge</button>
       </div>
     </div>
-  </div>
+  </Card>
 </template>
 
 <script lang="ts">

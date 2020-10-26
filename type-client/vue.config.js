@@ -8,5 +8,15 @@ module.exports = {
   },
   devServer: {
     disableHostCheck: true
-  }
+  },
+  lintOnSave: false,
+  // configureWebpack: {
+  //   resolve: {
+  //     extensions: [
+  //       '.ts',
+  //       '.js'
+  //     ]
+  //   },
+  //   target: "node",
+  // }
 };
