@@ -16,17 +16,21 @@
           <input type="password" v-model="params.password" id="password">
         </div>
         <div>
-          <label for="passwordConfirmation">パスワード（確認）</label>
-          <input type="password" v-model="params.passwordConfirmation" id="passwordConfirmation">
+          <label for="password_confirmation">パスワード（確認）</label>
+          <input type="password" v-model="params.password_confirmation" id="password_confirmation">
         </div>
         <button type="submit">登録</button>
       </form>
+      <div>
+        <button @click="clickHoge">hoge</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs } from '@vue/composition-api'
+import { defineComponent, reactive, toRefs, SetupContext } from '@vue/composition-api'
+import { User, AuthToken } from '@/store/types'
 import axios from '@/plugins/axios'
 
 // type Data = {
@@ -40,25 +44,56 @@ import axios from '@/plugins/axios'
 
 export default defineComponent({
   name: 'Register',
-  setup () {
+  setup (props, context: SetupContext) {
     const state = reactive({
       params: {
         name: '',
         email: '',
         password: '',
-        passwordConfirmation: ''
+        password_confirmation: ''
       }
     })
 
     const onSubmit = async () => {
+      let response
       try {
-        const response = await axios.post('/users', { user: state.params })
-        console.log(response)
+        response = await axios.post('/auth', state.params)
       } catch (e) {
+        alert(e)
         return
       }
+      if (!response) { return }
+
+      const user: User = {
+        id: response.data.data.id,
+        name: response.data.data.name,
+        email: response.data.data.email
+      }
+
+      const authToken: AuthToken = {
+        ['access-token']: response.headers['access-token'],
+        client: response.headers.client,
+        uid: response.headers.uid
+      }
+      context.root.$store.commit('user/setUser', user)
+      try {
+        await context.root.$store.dispatch('user/setAuthToken', authToken)
+        alert('登録完了')
+      } catch (e) {
+        alert(e)
+      }
     }
-    return { ...toRefs(state), onSubmit }
+
+    const clickHoge = async () => {
+      const response = await axios.get('/auth', {
+        headers: {
+          // withCredentials: 'include'
+        }
+      })
+      console.log(response)
+    }
+
+    return { ...toRefs(state), onSubmit, clickHoge }
   }
 })
 </script>

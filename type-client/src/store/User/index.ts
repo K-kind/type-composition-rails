@@ -6,6 +6,7 @@ import mutations from './mutations'
 
 const state: UserState = {
   user: null,
+  authToken: null
 }
 
 export const user: Module<UserState, RootState> = {

@@ -1,7 +1,22 @@
 import { ActionTree } from 'vuex'
-import { UserState, RootState, User } from '@/store/types'
+import { UserState, RootState, AuthToken } from '@/store/types'
+import axios from '@/plugins/axios'
 
 const actions: ActionTree<UserState, RootState> = {
+  setAuthToken: ({ commit } , authToken: AuthToken) => {
+    commit('setAuthToken', authToken)
+    return axios.post(
+      '/cookie',
+      { auth_tokens: JSON.stringify(authToken) },
+      {
+        headers: {
+          ['access-token']: authToken['access-token'],
+          client: authToken.client,
+          uid: authToken.uid
+        }
+      }
+    )
+  }
   // add: async ({ commit }, todo: Todo) => {
   //   if (await someAsyncAddMethod(todo)) {
   //     commit('add', todo)
